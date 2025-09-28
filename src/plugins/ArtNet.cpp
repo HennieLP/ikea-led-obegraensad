@@ -44,16 +44,17 @@ void ArtNetPlugin::websocketHook(DynamicJsonDocument &request)
 {
     const char *event = request["event"];
 
-    if (currentStatus == NONE)
+    if (currentStatus != NONE)
     {
-        if (!strcmp(event, "artnet"))
-        {
-            uint16_t universe = request["universe"].as<uint16_t>();
-            Serial.print("Changing ArtNet Universe to ");
-            Serial.println(universe);
-            artnet.setUniverse(universe);
-            Serial.print("Current Universe: ");
-            Serial.println(artnet.getOutgoing());
-        }
+        return;
+    }
+    if (!strcmp(event, "artnet"))
+    {
+        uint16_t universe = request["universe"].as<uint16_t>();
+        Serial.print("Changing ArtNet Universe to ");
+        Serial.println(universe);
+        artnet.setUniverse(universe);
+        Serial.print("Current Universe: ");
+        Serial.println(artnet.getOutgoing());
     }
 }
