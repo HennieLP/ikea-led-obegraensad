@@ -116,6 +116,8 @@ void WeatherPlugin::update()
             Screen.drawNumbers(3, tempY, {-temperature});
         }
     }
+    // close connection to prevent Crashes
+    http.end();
 }
 
 const char *WeatherPlugin::getName() const
