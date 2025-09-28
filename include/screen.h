@@ -13,7 +13,9 @@ private:
 
   uint8_t brightness_ = 255;
   uint8_t renderBuffer_[ROWS * COLS];
+  uint8_t pendingRenderBuffer_[ROWS * COLS]; // Double buffering: drawing buffer
   uint8_t rotatedRenderBuffer_[ROWS * COLS];
+  bool pendingRenderUpdate_ = false;
   uint8_t cache_[ROWS * COLS];
   uint8_t positions[ROWS * COLS] = {
       0x0f, 0x0e, 0x0d, 0x0c, 0x0b, 0x0a, 0x09, 0x08, 0x18, 0x19, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f,
@@ -51,9 +53,12 @@ public:
   void setBrightness(uint8_t brightness, bool shouldStore = false);
 
   void setRenderBuffer(const uint8_t *renderBuffer, bool grays = false);
+  void setPendingRenderBuffer(const uint8_t *renderBuffer, bool grays = false);
   uint8_t *getRenderBuffer();
+  uint8_t *getPendingRenderBuffer();
 
   void clear();
+  void pendingClear();
   void clearRect(int x, int y, int width, int height);
 
   void setPixel(uint8_t x, uint8_t y, uint8_t value, uint8_t brightness = 255);
@@ -66,7 +71,10 @@ public:
   bool isCacheEmpty() const;
   void cacheCurrent();
   void restoreCache();
+  void cachePendingCurrent();
+  void restorePendingCache();
   uint8_t getBufferIndex(int index);
+  uint8_t getPendingBufferIndex(int index);
 
   void drawLine(int x1, int y1, int x2, int y2, int ledStatus, uint8_t brightness = 255);
   void drawRectangle(int x, int y, int width, int height, bool fill, int ledStatus, uint8_t brightness = 255);
@@ -78,6 +86,8 @@ public:
 
   void scrollText(std::string text, int delayTime = 30, uint8_t brightness = 255, uint8_t fontid = 0);
   void scrollGraph(std::vector<int> graph = {}, int miny = 0, int maxy = 15, int delayTime = 60, uint8_t brightness = 255);
+
+  void present();
 };
 
 extern Screen_ &Screen;

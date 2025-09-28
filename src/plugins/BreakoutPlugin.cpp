@@ -19,6 +19,7 @@ void BreakoutPlugin::initBricks()
     this->bricks[i].x = i % this->X_MAX;
     this->bricks[i].y = i / this->X_MAX;
     Screen.setPixelAtIndex(this->bricks[i].y * this->X_MAX + this->bricks[i].x, this->LED_TYPE_ON, 50);
+    Screen.present();
 
     delay(25);
   }
@@ -43,6 +44,7 @@ void BreakoutPlugin::newLevel()
 
   this->level++;
   this->gameState = this->GAME_STATE_RUNNING;
+  Screen.present();
 }
 
 void BreakoutPlugin::updateBall()
@@ -53,6 +55,7 @@ void BreakoutPlugin::updateBall()
   }
   this->lastBallUpdate = millis();
   Screen.setPixelAtIndex(this->ball.y * this->X_MAX + this->ball.x, this->LED_TYPE_OFF, 100);
+  Screen.present();
 
   if (this->ballMovement[1] == 1)
   {
@@ -94,6 +97,7 @@ void BreakoutPlugin::updateBall()
   this->ball.y += this->ballMovement[1];
 
   Screen.setPixelAtIndex(this->ball.y * this->X_MAX + this->ball.x, this->LED_TYPE_ON, 100);
+  Screen.present();
 }
 
 void BreakoutPlugin::hitBrick(byte i)
@@ -108,6 +112,7 @@ void BreakoutPlugin::hitBrick(byte i)
     this->ballDelay -= this->BALL_DELAY_STEP;
   }
   Screen.setPixelAtIndex(this->bricks[i].y * this->X_MAX + this->bricks[i].x, this->LED_TYPE_OFF);
+  Screen.present();
 }
 
 void BreakoutPlugin::checkPaddleCollision()
@@ -164,6 +169,7 @@ void BreakoutPlugin::updatePaddle()
     for (byte i = 0; i < this->PADDLE_WIDTH; i++)
     {
       Screen.setPixelAtIndex(this->paddle[i].y * this->X_MAX + this->paddle[i].x, this->LED_TYPE_OFF);
+      Screen.present();
     }
     for (byte i = 0; i < this->PADDLE_WIDTH; i++)
     {
@@ -172,6 +178,7 @@ void BreakoutPlugin::updatePaddle()
     for (byte i = 0; i < this->PADDLE_WIDTH; i++)
     {
       Screen.setPixelAtIndex(this->paddle[i].y * this->X_MAX + this->paddle[i].x, this->LED_TYPE_ON);
+      Screen.present();
     }
   }
   else
@@ -184,6 +191,7 @@ void BreakoutPlugin::end()
 {
   this->gameState = this->GAME_STATE_END;
   Screen.setPixelAtIndex(this->ball.y * this->X_MAX + this->ball.x, this->LED_TYPE_ON);
+  Screen.present();
 }
 
 void BreakoutPlugin::setup()

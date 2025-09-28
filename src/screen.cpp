@@ -56,9 +56,41 @@ uint8_t Screen_::getBufferIndex(int index)
   return renderBuffer_[index];
 }
 
+void Screen_::setPendingRenderBuffer(const uint8_t *renderBuffer, bool grays)
+{
+  if (grays)
+  {
+    memcpy(pendingRenderBuffer_, renderBuffer, ROWS * COLS);
+  }
+  else
+  {
+    for (int i = 0; i < ROWS * COLS; i++)
+    {
+      pendingRenderBuffer_[i] = renderBuffer[i] * 255;
+    }
+  }
+}
+
+uint8_t *Screen_::getPendingRenderBuffer()
+{
+  return pendingRenderBuffer_;
+}
+
+uint8_t Screen_::getPendingBufferIndex(int index)
+{
+  return pendingRenderBuffer_[index];
+}
+
+// Backwards compatibility, use pendingClear() with present() instead
 void Screen_::clear()
 {
-  memset(renderBuffer_, 0, ROWS * COLS);
+  memset(pendingRenderBuffer_, 0, ROWS * COLS);
+  Screen.present();
+}
+
+void Screen_::pendingClear()
+{
+  memset(pendingRenderBuffer_, 0, ROWS * COLS);
 }
 
 void Screen_::clearRect(int x, int y, int width, int height)
@@ -82,7 +114,7 @@ void Screen_::clearRect(int x, int y, int width, int height)
   width = std::min(width, COLS - x);
   for (int row = y; row < y + height; row++)
   {
-    memset(renderBuffer_ + (row * COLS + x), 0, width);
+    memset(pendingRenderBuffer_ + (row * COLS + x), 0, width);
   }
 }
 
@@ -102,9 +134,21 @@ void Screen_::cacheCurrent()
   memcpy(cache_, renderBuffer_, ROWS * COLS);
 }
 
+//This is for backwards compatibility, use restorePendingCache() with present() instead
 void Screen_::restoreCache()
 {
-  setRenderBuffer(cache_, true);
+  setPendingRenderBuffer(cache_, true);
+  present();
+}
+
+void Screen_::cachePendingCurrent()
+{
+  memcpy(cache_, pendingRenderBuffer_, ROWS * COLS);
+}
+
+void Screen_::restorePendingCache()
+{
+  setPendingRenderBuffer(cache_, true);
 }
 // CACHE END
 
@@ -118,7 +162,7 @@ void Screen_::loadFromStorage()
   if (currentStatus == NONE)
   {
     clear();
-    storage.getBytes("data", renderBuffer_, ROWS * COLS);
+    storage.getBytes("data", pendingRenderBuffer_, ROWS * COLS);
   }
   else
   {
@@ -128,6 +172,7 @@ void Screen_::loadFromStorage()
   setBrightness(storage.getUInt("brightness", 255));
   setCurrentRotation(storage.getUInt("rotation", 0));
   storage.end();
+  present();
 #endif
 }
 
@@ -180,14 +225,20 @@ void Screen_::setPixelAtIndex(uint8_t index, uint8_t value, uint8_t brightness)
 {
   if (index >= COLS * ROWS)
     return;
-  renderBuffer_[index] = value <= 0 || brightness <= 0 ? 0 : (brightness > 255 ? 255 : brightness);
+  pendingRenderBuffer_[index] = value <= 0 || brightness <= 0 ? 0 : (brightness > 255 ? 255 : brightness);
 }
 
 void Screen_::setPixel(uint8_t x, uint8_t y, uint8_t value, uint8_t brightness)
 {
   if (x >= COLS || y >= ROWS)
     return;
-  renderBuffer_[y * COLS + x] = value <= 0 || brightness <= 0 ? 0 : (brightness > 255 ? 255 : brightness);
+  pendingRenderBuffer_[y * COLS + x] = value <= 0 || brightness <= 0 ? 0 : (brightness > 255 ? 255 : brightness);
+}
+
+void Screen_::present()
+{
+  // Instead of swapping immediately, set the flag
+  pendingRenderUpdate_ = true;
 }
 
 void Screen_::setCurrentRotation(int rotation, bool shouldPersist)
@@ -247,6 +298,15 @@ ICACHE_RAM_ATTR void Screen_::_render()
   memset(bits, 0, ROWS * COLS / 8);
 
   static unsigned char counter = 0;
+
+  // Copy drawBuffer_ to renderBuffer_ only at the start of a new PWM cycle
+  if (counter == 0 && pendingRenderUpdate_)
+  { 
+    noInterrupts();
+    memcpy(renderBuffer_, pendingRenderBuffer_, ROWS * COLS);
+    pendingRenderUpdate_ = false;
+    interrupts();
+  }
 
   for (int idx = 0; idx < ROWS * COLS; idx++)
   {

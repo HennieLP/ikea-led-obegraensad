@@ -13,6 +13,7 @@ void FireworkPlugin::drawExplosion(int x, int y, int maxRadius, int brightness)
       }
     }
   }
+  Screen.present();
 }
 
 void FireworkPlugin::explode(int x, int y)

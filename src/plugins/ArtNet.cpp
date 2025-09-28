@@ -36,6 +36,7 @@ void ArtNetPlugin::onDmxFrame(uint16_t universe, uint16_t length, uint16_t outgo
         for (int i = 0; i < ROWS * COLS; i++)
         {
             Screen.setPixelAtIndex(i, data[i] > 4, data[i]);
+            Screen.present();
         }
     }
 }

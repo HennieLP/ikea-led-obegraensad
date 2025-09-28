@@ -35,7 +35,7 @@ void AnimationPlugin::loop()
         {
             Screen.setPixelAtIndex(i, bits[i]);
         }
-
+        Screen.present();        
         this->step++;
 
         if (this->step >= size)
