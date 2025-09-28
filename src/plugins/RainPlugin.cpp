@@ -31,6 +31,7 @@ void RainPlugin::loop()
         brightness = 64;
 
       Screen.setPixel(x, y, 1, brightness);
+      Screen.present();
     }
   }
 
@@ -47,6 +48,7 @@ void RainPlugin::loop()
       this->drops[i].visible = true;
 
       Screen.setPixel(this->drops[i].x, this->drops[i].y, RainPlugin::LED_TYPE_ON, 255);
+      Screen.present();
     }
     else
     {
@@ -57,6 +59,7 @@ void RainPlugin::loop()
         continue;
       }
       Screen.setPixel(this->drops[i].x, this->drops[i].y, RainPlugin::LED_TYPE_ON, 255);
+      Screen.present();
     }
   }
 

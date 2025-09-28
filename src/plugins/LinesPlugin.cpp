@@ -21,6 +21,7 @@ void LinesPlugin::loop()
   {
     this->count = 0;
   }
+  Screen.present();
   delay(200);
 }
 

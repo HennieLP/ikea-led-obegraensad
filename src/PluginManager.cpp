@@ -78,7 +78,7 @@ void PluginManager::setActivePlugin(const char *pluginName)
         {
             Screen.clear();
             activePlugin = plugin;
-            activePlugin->setup();
+            setupActivePlugin(); // Uses the method to ensure proper setup
             break;
         }
     }
@@ -100,6 +100,7 @@ void PluginManager::setupActivePlugin()
     if (activePlugin)
     {
         activePlugin->setup();
+        Screen.present(); // Backwards compatibility for plugins not using present()
     }
 }
 
@@ -109,6 +110,7 @@ void PluginManager::runActivePlugin()
         currentStatus != LOADING && currentStatus != WSBINARY)
     {
         activePlugin->loop();
+        Screen.present(); // Backwards compatibility for plugins not using present()
     }
 }
 

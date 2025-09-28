@@ -25,6 +25,7 @@ void StarsPlugin::loop()
         {
           stars[i].brightness = max(0, stars[i].brightness - 8);
           Screen.setPixel(stars[i].x, stars[i].y, 1, stars[i].brightness);
+          Screen.present();
           stars[i].lastUpdateTime = currentTime;
         }
       }
@@ -40,6 +41,7 @@ void StarsPlugin::loop()
           if (currentTime - stars[i].lastUpdateTime >= 64)
           {
             Screen.setPixel(stars[i].x, stars[i].y, 1, brightness);
+            Screen.present();
             stars[i].lastUpdateTime = currentTime;
           }
         }

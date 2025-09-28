@@ -10,14 +10,6 @@ void TickingClockPlugin::loop()
 {
   if (getLocalTime(&timeinfo))
   {
-
-    if ((timeinfo.tm_hour * 60 + timeinfo.tm_min) < 6 * 60 + 30 ||
-        (timeinfo.tm_hour * 60 + timeinfo.tm_min) > 22 * 60 + 30) // only between 6:30 and 22:30
-    {
-      Screen.clear();
-      return;
-    }
-
     if (previousHour != timeinfo.tm_hour || previousMinutes != timeinfo.tm_min)
     {
 
@@ -30,6 +22,7 @@ void TickingClockPlugin::loop()
       Screen.drawCharacter(9, 0, Screen.readBytes(fonts[1].data[hh[1]]), 8, Screen.getCurrentBrightness());
       Screen.drawCharacter(2, 9, Screen.readBytes(fonts[1].data[mm[0]]), 8, Screen.getCurrentBrightness());
       Screen.drawCharacter(9, 9, Screen.readBytes(fonts[1].data[mm[1]]), 8, Screen.getCurrentBrightness());
+      Screen.present();
       previousMinutes = timeinfo.tm_min;
       previousHour = timeinfo.tm_hour;
     }
@@ -42,7 +35,6 @@ void TickingClockPlugin::loop()
         Screen.setPixel(timeinfo.tm_sec * 16 / 60, 7, 1, Screen.getCurrentBrightness());
       else
         Screen.setPixel(timeinfo.tm_sec * 16 / 60, 8, 1, Screen.getCurrentBrightness());
-
       previousSecond = timeinfo.tm_sec;
     }
   }

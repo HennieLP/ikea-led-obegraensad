@@ -264,6 +264,7 @@ void SnakePlugin::moveSnake(uint newpos)
     Screen.setPixelAtIndex(this->position[0], SnakePlugin::LED_TYPE_OFF);
     this->position.erase(this->position.begin()); // removing first element (end) of snake
   }
+  Screen.present();
 }
 
 void SnakePlugin::end()
@@ -272,46 +273,54 @@ void SnakePlugin::end()
   {
     Screen.setPixelAtIndex(n, SnakePlugin::LED_TYPE_OFF);
   }
+  Screen.present();
   delay(200);
 
   for (const int &n : this->position)
   {
     Screen.setPixelAtIndex(n, SnakePlugin::LED_TYPE_ON);
   }
+  Screen.present();
   delay(200);
 
   for (const int &n : this->position)
   {
     Screen.setPixelAtIndex(n, SnakePlugin::LED_TYPE_OFF);
   }
+  Screen.present();
   delay(200);
 
   for (const int &n : this->position)
   {
     Screen.setPixelAtIndex(n, SnakePlugin::LED_TYPE_ON);
   }
+  Screen.present();
   delay(200);
 
   for (const int &n : this->position)
   {
     Screen.setPixelAtIndex(n, SnakePlugin::LED_TYPE_OFF);
   }
+  Screen.present();
   delay(200);
 
   for (const int &n : this->position)
   {
     Screen.setPixelAtIndex(n, SnakePlugin::LED_TYPE_ON);
   }
+  Screen.present();
   delay(500);
 
   for (const int &n : this->position)
   {
     Screen.setPixelAtIndex(n, SnakePlugin::LED_TYPE_OFF);
+    Screen.present();
     delay(200);
   }
 
   delay(200);
   Screen.setPixelAtIndex(this->dot, SnakePlugin::LED_TYPE_OFF);
+  Screen.present();
   delay(500);
 
   this->gameState = SnakePlugin::GAME_STATE_END;

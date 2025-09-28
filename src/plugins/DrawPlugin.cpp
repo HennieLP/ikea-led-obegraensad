@@ -31,6 +31,7 @@ void DrawPlugin::websocketHook(DynamicJsonDocument &request)
     if (!strcmp(event, "led"))
     {
       Screen.setPixelAtIndex(request["index"], request["status"]);
+      Screen.present();
     }
     else if (!strcmp(event, "clear"))
     {
