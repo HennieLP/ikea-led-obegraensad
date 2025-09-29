@@ -21,7 +21,7 @@ PluginManager::PluginManager() : nextPluginId(1) {}
 
 void PluginManager::init()
 {
-    Screen.clear();
+    // Screen.clear(); Shouldn't be needed here
     std::vector<Plugin *> &allPlugins = pluginManager.getAllPlugins();
 
     activatePersistedPlugin();
@@ -76,7 +76,7 @@ void PluginManager::setActivePlugin(const char *pluginName)
     {
         if (strcmp(plugin->getName(), pluginName) == 0)
         {
-            Screen.clear();
+            Screen.pendingClear();
             activePlugin = plugin;
             setupActivePlugin(); // Uses the method to ensure proper setup
             break;
@@ -99,15 +99,17 @@ void PluginManager::setupActivePlugin()
 {
     if (activePlugin)
     {
+        SYSTEM_STATUS tmpoverwride = currentStatus;
+        currentStatus = SETUP; // or else the loop gets run before setup is done!
         activePlugin->setup();
         Screen.present(); // Backwards compatibility for plugins not using present()
+        currentStatus = tmpoverwride;
     }
 }
 
 void PluginManager::runActivePlugin()
 {
-    if (activePlugin && currentStatus != UPDATE &&
-        currentStatus != LOADING && currentStatus != WSBINARY)
+    if (activePlugin && currentStatus == NONE)
     {
         activePlugin->loop();
         Screen.present(); // Backwards compatibility for plugins not using present()

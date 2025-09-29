@@ -55,6 +55,7 @@
 enum SYSTEM_STATUS
 {
   NONE,
+  SETUP,
   WSBINARY,
   UPDATE,
   LOADING,

@@ -67,7 +67,8 @@ void onWsEvent(
     {
       if (info->opcode == WS_BINARY && currentStatus == WSBINARY && info->len == 256)
       {
-        Screen.setRenderBuffer(data, true);
+        Screen.setPendingRenderBuffer(data, true);
+        Screen.present();
       }
       else if (info->opcode == WS_TEXT)
       {
