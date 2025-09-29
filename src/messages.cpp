@@ -50,6 +50,8 @@ void Messages_::remove(int id)
 
 void Messages_::scroll()
 {
+  return;
+  
   Screen.persist();
 
   for (auto it = activeMessages.begin(); it != activeMessages.end();)

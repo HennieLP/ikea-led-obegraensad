@@ -161,7 +161,7 @@ void Screen_::loadFromStorage()
 
   if (currentStatus == NONE)
   {
-    clear();
+    pendingClear();
     storage.getBytes("data", pendingRenderBuffer_, ROWS * COLS);
   }
   else
